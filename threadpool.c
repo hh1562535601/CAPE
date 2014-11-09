@@ -4,12 +4,7 @@
  * This file will contain your implementation of a threadpool.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-
-#include "threadpool.h"
+#include "crawler.h"
 
 // _threadpool is the internal threadpool structure that is
 // cast to type "threadpool" before it given out to callers

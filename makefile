@@ -1,8 +1,11 @@
-Crawler:main.o sock.o
-	cc main.o sock.o -o Crawler
+Crawler:cra_main.o crawler.o threadpool.o
+	cc cra_main.o crawler.o threadpool.o -o Crawler -lpthread
 
-main.o:main.c
-	cc -c main.c -o main.o
+cra_main.o:cra_main.c
+	cc -c cra_main.c -o cra_main.o
 
-sock.o:sock.c
-	cc -c sock.c -o sock.o
+crawler.o:crawler.c
+	cc -c crawler.c -o crawler.o
+
+threadpool.o:threadpool.c
+	cc -c threadpool.c -o threadpool.o
