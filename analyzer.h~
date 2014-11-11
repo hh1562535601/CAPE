@@ -1,9 +1,0 @@
-#include <assert.h>
-#include <libc.h>
-#include <stdio.h>
-#include <nanomsg/nn.h>
-#include <nanomsg/pipeline.h>
-
-#define IPC_URL "ipc://./cra_ana.ipc"
-
-
