@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include "GeneralHashFunctions.h"
+
+#define HASH_NUMBER 11
+#define BIT_ARRAY_LENGTH 239620000
+
+void bf_add(void *, char* );
+int bf_search(void *bf, char *line);
+void set_BIT(unsigned int bit, void *bf);
+unsigned int get_BIT(unsigned int bit, void *bf);
+unsigned int (*hashfamily[HASH_NUMBER])(char *, unsigned int) = {&RSHash, &JSHash, &PJWHash, &ELFHash, &BKDRHash, &SDBMHash, &DJBHash, &DEKHash, &BPHash, &FNVHash, &APHash};
+
+int main(int argc, char *argv[])
+{
+/*time_t rawtime;
+struct tm * timeinfo1;
+time (&rawtime);
+timeinfo1 = localtime(&rawtime);
+printf("current time :%s",asctime(timeinfo1));*/
+
+
+	FILE *fp_strpool, *fp_checkedstr, *fp_result;//FILE *name = fopen(filename,type);
+	char line[1024];
+	char *p;
+	fp_strpool = fopen(argv[1], "r");
+	fp_checkedstr = fopen(argv[2], "r");
+	fp_result = fopen(argv[3], "w");
+
+	if(argc<4) {
+		fprintf(stderr, "ERROR: No word file specified\n");
+		return EXIT_FAILURE;
+	}
+	bf_check(fp_strpool, fp_checkedstr, fp_result);
+
+/*struct tm * timeinfo2;
+time (&rawtime);
+timeinfo2 = localtime(&rawtime);
+printf("current time is :%s",asctime(timeinfo2));*/
+
+
+	return 0;
+}
+
+int bf_check(FILE* fp_strpool, FILE* fp_checkedstr, FILE* fp_result)
+{
+	int pos = -1;
+	char line[1024];
+	void *bf = malloc(BIT_ARRAY_LENGTH);//内存分配
+	int counter1 = 0;
+	int counter2 = 0;
+	while(fgets(line, 1024, fp_strpool)){////fgets 可以从文件中读取字符串char *fgets(char *buf, int bufsize, FILE *stream) 从stream中读取1023个字符，第1024个为\0，读取的字符串保存在line[0]中
+		bf_add(bf, line);//strpool中Email映射到布隆过滤器中
+		counter1++;
+	}
+	while(fgets(line, 1024, fp_checkedstr)){//fgets 可以从文件中读取字符串char *fgets(char *buf, int bufsize, FILE *stream) 从stream中读取1023个字符，第1024个为\0，读取的字符串保存在line[0]中
+		counter2++;
+		pos++;
+		if(bf_search(bf, line) == 0){//检察是否在strpool中，如果是1，表明在，yes,否则no
+			printf("no\n");
+			fprintf(fp_result, "%d, no\n", pos);//将结果写入result中 int fprintf( FILE *stream, const char *format, ... )
+		}
+		else
+		{
+			printf("yes\n");
+			fprintf(fp_result, "%d, yes\n", pos);//将结果写入result
+		}
+	}
+}
+
+void bf_add(void *bf, char *line)//将email地址通过11个哈希函数得到11个数字,调用了置位函数，相应位置1
+{
+	int i = 0;
+	while(i<HASH_NUMBER)//hash_number=11
+	{
+		set_BIT((*hashfamily[i++])(line, strlen(line)), bf);
+	}
+}
+
+int bf_search(void *bf, char *line)//调用了检察函数，检察是否是1，如果是1，返回1，不是1，返回0
+{
+	int i = 0;
+	while(i<HASH_NUMBER)
+		if(get_BIT(hashfamily[i++](line, strlen(line)), bf) == 0)
+			return 0;
+	return 1;
+}
+
+void set_BIT(unsigned int bit, void *bf)//置位函数
+{
+	unsigned int i = bit/8%BIT_ARRAY_LENGTH;
+	int j = bit%8;
+	char *c = (char *) bf;
+	//printf("i: %d, j: %d\n", i, j);
+	//printf("c[i] : %2x\n", c[i]);
+	c[i] = (0x00000001<<j) | c[i];
+	//printf("c[i] : %2x\n", c[i]);
+}
+
+unsigned int get_BIT(unsigned int bit, void *bf)//检察标志位
+{
+	unsigned int i = bit/8%BIT_ARRAY_LENGTH;
+	int j = bit%8;
+	char *c = (char *) bf;
+	if ((int)(c[i] & (0x00000001<<j)) == 0)
+		return 0;
+	else 
+		return 1;
+}
+
+

@@ -91,3 +91,35 @@ void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, 
 }
 
 
+/*int ipc_cra(char **urlset,int n)
+{
+  int sz_msg = strlen (urlset[n]) + 1; // '\0' too
+  int sock = nn_socket (AF_SP, NN_PUSH);
+  assert (sock >= 0);
+  assert (nn_connect (sock, IPC_URL) >= 0);
+  //printf ("NODE1: SENDING \"%s\"\n", msg);
+  int bytes = nn_send (sock, urlset[n], sz_msg, 0);
+  assert (bytes == sz_msg);
+  return nn_shutdown (sock, 0);
+}*/
+
+
+int ipc_cra(const char *url,char *buf)
+{
+  int sock = nn_socket (AF_SP, NN_PAIR);
+  assert (sock >= 0);
+  assert (nn_bind (sock, IPC_URL) >= 0);
+  send_recv(sock, url,buf);
+  return nn_shutdown (sock, 0);
+}
+
+
+void cb_func(evutil_socket_t fd, short what,void *arg)
+{
+	char *response=(char*)malloc(400*1024*sizeof(char));
+	//printf("cb_func:%s\n",(char*)arg);
+	read(fd, response, 400*1024);
+	printf("%s",response);
+
+}
+

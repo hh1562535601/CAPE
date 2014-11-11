@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <libc.h>
+#include <string.h>
 #include <stdio.h>
 #include <nanomsg/nn.h>
 #include <nanomsg/pipeline.h>
