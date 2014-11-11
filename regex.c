@@ -26,6 +26,7 @@ int main(int argc, char **argv)
     char *p;
     //char pattern[] ="([/w-]+/.)+[/w-]+.([^a-z])(/[/w-: ./?%&=]*)?|[a-zA-Z/-/.][/w-]+.([^a-z])(/[/w-: ./?%&=]*)?";
     //char pattern[] ="([http|https]://)?([/w-]+/.)+[/w-]+(/[/w- ./?%&amp;=]*)?";
+//<a href=\"([^\"]+)\"[^>]*>[^<]+</a>  http:[^"]* char pattern[] = "<a href.+?+\"";
     char pattern[] = "\"http:[^\"]*\"";
     //printf("String   :   %s\n ", string);
     printf("Pattern:   \" %s \" \n", pattern);
