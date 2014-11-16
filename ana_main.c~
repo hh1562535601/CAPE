@@ -21,7 +21,7 @@ int main()
 		us.url[i]=NULL;
 	}
 
-	analyze(&us,sockfd);
+	analyze(us,sockfd);
 
 	assert(nn_shutdown (sockfd, 0));
 

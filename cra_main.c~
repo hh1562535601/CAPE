@@ -20,6 +20,12 @@ int main()
 	char *url="http://10.106.108.179/techqq/index.htm";
 	char *buf=(char*)malloc(250*1024*sizeof(char));
 	char *recvbuf=NULL;
+	int sockfd = nn_socket (AF_SP, NN_PAIR);
+	int timeout=100;
+	int i;
+
+	assert (sockfd >= 0);
+	nn_setsockopt (sockfd, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof (timeout));
 
 	/*while(1)
 	{

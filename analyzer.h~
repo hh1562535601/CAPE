@@ -19,6 +19,4 @@ typedef struct urlset
 	char **url;
 }urlset;
 
-int ipc_ana(const char *url,char *buf);
-int analyze(urlset *pus,int sockfd);
-
+int ipc_ana(const char *url,char *buf)

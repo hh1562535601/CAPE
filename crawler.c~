@@ -78,7 +78,7 @@ void crawler(int sockfd,char *url,char *buf)
 	event_base_loopexit(base,&tv);
 	event_base_dispatch(base);
 	//printf("after dispatch!\n");
-	send_ipc(sockfd,buf);
+	//send_ipc(sockfd,buf);
 }
 
 void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, char * ip, int port, char * file_loc, char * body, char * connection_type) 

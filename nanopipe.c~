@@ -29,9 +29,7 @@ int node1 (const char *url, const char *msg)
   assert (sock >= 0);
   assert (nn_connect (sock, url) >= 0);
   printf ("NODE1: SENDING \"%s\"\n", msg);
-  printf("before send!\n");
   int bytes = nn_send (sock, msg, sz_msg, 0);
-  printf("after send!\n");
   assert (bytes == sz_msg);
   return nn_shutdown (sock, 0);
 }

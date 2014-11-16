@@ -94,7 +94,7 @@ int analyze(urlset *pus,int sockfd)
              matched[len] = '\0';
                 
              strncpy(pus->url[pus->n_write],matched,len+1);
-             pus->n_write++;
+             	pus->n_write++;
              send_ipc(sockfd,matched);
        
 		//ipc_ana(matched,buf);
