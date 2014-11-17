@@ -5,12 +5,14 @@
 #include   <stdlib.h>
 #include   <regex.h>
 
+#include <fcntl.h>
+
 #include "ipc_nano.h"
  
-#define   SUBSLEN   10000
-#define   EBUFLEN   12800  /*   error   buffer   length   */
-#define   BUFLEN   102400   /*   matched   buffer   length   */
-#define      FILE_PATH                "./test.html","r"
+#define   SUBSLEN   10
+#define   EBUFLEN   128  /*   error   buffer   length   */
+#define   BUFLEN   1024   /*   matched   buffer   length   */
+#define   FILE_PATH     "./test.html","r"
 
 typedef struct urlset
 {

@@ -26,12 +26,11 @@ int main()
 		crawler(sockfd,url,buf);
   		assert (nn_bind (sockfd, IPC_URL) >= 0);
       	//printf ("NODE0: RECEIVED \"%s\"\n", buf);
-		recv_ipc(sockfd,recvbuf);
+		recv_ipc(sockfd,&recvbuf);
 		nn_freemsg (buf);
 	}*/
-	crawler(sockfd,url,buf);
-
-	assert(nn_shutdown (sockfd, 0));
+	//while(1)
+	crawler(url,buf);
 	
 	return 0;
 }

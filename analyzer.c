@@ -15,14 +15,14 @@
     }
 }*/
 
-int ipc_ana(const char *url,char *buf)
+/*int ipc_ana(const char *url,char *buf)
 {
   int sock = nn_socket (AF_SP, NN_PAIR);
   assert (sock >= 0);
   assert (nn_bind (sock, IPC_URL) >= 0);
   send_recv(sock,url,buf);
   return nn_shutdown (sock, 0);
-}
+}*/
 
 int analyze(urlset *pus,int sockfd)
 {
@@ -36,14 +36,14 @@ int analyze(urlset *pus,int sockfd)
  
     //char string[] = "AAAAabaaababAbAbCdCd123123   11(123){12} ";
     //char pattern[] = "(\\([0-9]+\\))(\\{[0-9]+\\}{1})$ ";
-    char *string=(char*)malloc(256*1024*sizeof(char));
-    char *p;
+    char *recvbuf=NULL;
+    char *p=NULL;
     //char pattern[] ="([/w-]+/.)+[/w-]+.([^a-z])(/[/w-: ./?%&=]*)?|[a-zA-Z/-/.][/w-]+.([^a-z])(/[/w-: ./?%&=]*)?";
     //char pattern[] ="([http|https]://)?([/w-]+/.)+[/w-]+(/[/w- ./?%&amp;=]*)?";
     //char pattern[] ="<a href=\"([^\"]+)\"[^>]*>[^<]+</a>";
     //char pattern[] ="http:[^"]*";
     //char pattern[] = "<a href.+?+\"";
-    char pattern[] = "\"http:[^\"]*\"";
+    char pattern[] = "http://[^\"]*";
     //printf("String   :   %s\n ", string);
     printf("Pattern:   \" %s \" \n", pattern);
  
@@ -66,14 +66,21 @@ int analyze(urlset *pus,int sockfd)
     /*   execute   pattern   match   */
     // regexec (regex_t *compiled, char *string, size_t nmatch, regmatch_t matchptr [], int eflags)
     //fread(string,1,256*1024,fp);
-    assert (nn_bind (sockfd, IPC_URL) >= 0);
-    recv_ipc(sockfd,string);
-    p=string;
- 
-    while(1)
+
+    recv_ipc(&recvbuf);
+     
+    p=recvbuf;
+    printf("%s",p);
+    
+    //int file = open("./test_ana.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
+    FILE *file=fopen("./test_ana.html","a");
+    fprintf(file,"%s",p);
+    close(file);
+    
+    /*while(1)
      {
 		err = regexec(&re, p, (size_t)SUBSLEN, subs, 0);
-
+//printf("1111111111111111111\n");
 		if (err == REG_NOMATCH)
                 {
                     fprintf(stderr, "Sorry,   no   match   ...\n");
@@ -89,23 +96,26 @@ int analyze(urlset *pus,int sockfd)
                 }	
 		//printf("%d\n",err);
 		printf("match  begin: %d, end: %d, ",subs[0].rm_so, subs[0].rm_eo);
-             len = subs[0].rm_eo - subs[0].rm_so;
+             len = subs[0].rm_eo - subs[0].rm_so+1;
              memcpy(matched, p + subs[0].rm_so, len);
              matched[len] = '\0';
+             printf("%s\n",matched);
                 
-             strncpy(pus->url[pus->n_write],matched,len+1);
+             strncpy(pus->url[pus->n_write],matched,len);
              pus->n_write++;
-             send_ipc(sockfd,matched);
+             send_ipc(matched);
        
 		//ipc_ana(matched,buf);
 
 		p+=subs[0].rm_eo;
 
-		if(!*p)
+		if(*p=='\0')
 		{
 			break;
 		}
         }
+        
+        nn_freemsg(recvbuf);
 
  
        /*if   no   REG_NOMATCH   and   no   error,   then   pattern   matched  

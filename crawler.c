@@ -42,7 +42,7 @@ void crawler1(void *arg)
 	close(sockfd);
 }
 
-void crawler(int sockfd,char *url,char *buf)
+void crawler(char *url,char *buf)
 {
 	struct event *ev;
 	struct event_base *base=event_base_new();
@@ -73,12 +73,12 @@ void crawler(int sockfd,char *url,char *buf)
 	int send = write(fd, request, strlen(request));
 	free(request);
 
-	ev=event_new(base,fd,EV_TIMEOUT|EV_READ|EV_PERSIST,cb_func,buf);
+	ev=event_new(base,fd,EV_TIMEOUT|EV_READ|EV_PERSIST,cb_func,NULL);
 	event_add(ev,NULL);
 	event_base_loopexit(base,&tv);
 	event_base_dispatch(base);
 	//printf("after dispatch!\n");
-	send_ipc(sockfd,buf);
+	//send_ipc(buf);
 }
 
 void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, char * ip, int port, char * file_loc, char * body, char * connection_type) 
@@ -140,7 +140,7 @@ void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, 
   int bytes = nn_send (sock, urlset[n], sz_msg, 0);
   assert (bytes == sz_msg);
   return nn_shutdown (sock, 0);
-}*/
+}
 
 
 int ipc_cra(const char *url,char *buf)
@@ -150,7 +150,7 @@ int ipc_cra(const char *url,char *buf)
   assert (nn_bind (sock, IPC_URL) >= 0);
   send_recv(sock, url,buf);
   return nn_shutdown (sock, 0);
-}
+}*/
 
 
 void cb_func(evutil_socket_t fd, short what,void *arg)
@@ -165,7 +165,9 @@ void cb_func(evutil_socket_t fd, short what,void *arg)
 	
 	close(file);*/
 	
-	strncpy((char*)arg,response,len);
+	//strncpy((char*)arg,response,len);
+	response[len]='\0';
+	send_ipc(response);
 	
 	free(response);
 }
