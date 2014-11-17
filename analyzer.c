@@ -41,11 +41,11 @@ int analyze(urlset *pus,int sockfd)
     //char pattern[] ="([/w-]+/.)+[/w-]+.([^a-z])(/[/w-: ./?%&=]*)?|[a-zA-Z/-/.][/w-]+.([^a-z])(/[/w-: ./?%&=]*)?";
     //char pattern[] ="([http|https]://)?([/w-]+/.)+[/w-]+(/[/w- ./?%&amp;=]*)?";
     //char pattern[] ="<a href=\"([^\"]+)\"[^>]*>[^<]+</a>";
-    //char pattern[] ="http:[^"]*";
+    //char pattern[] ="http://[^\"]*";
     //char pattern[] = "<a href.+?+\"";
-    char pattern[] = "http://[^\"]*";
+    char pattern[] = "<a href=\"http://[^\"]*\"";
     //printf("String   :   %s\n ", string);
-    printf("Pattern:   \" %s \" \n", pattern);
+    //printf("Pattern:   \" %s \" \n", pattern);
  
     /*if(NULL == (fp = fopen(FILE_PATH)))
     {
@@ -70,17 +70,21 @@ int analyze(urlset *pus,int sockfd)
     recv_ipc(&recvbuf);
      
     p=recvbuf;
-    printf("%s",p);
+    //printf("%s",p);
+    if(p==NULL)
+    {
+    	return 0;
+    }
     
-    //int file = open("./test_ana.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
+    /*int file = open("./test_ana.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
     FILE *file=fopen("./test_ana.html","a");
     fprintf(file,"%s",p);
-    close(file);
+    close(file);*/
     
-    /*while(1)
-     {
+    while(1)
+     {		//printf("1111111111111111111\n");
 		err = regexec(&re, p, (size_t)SUBSLEN, subs, 0);
-//printf("1111111111111111111\n");
+
 		if (err == REG_NOMATCH)
                 {
                     fprintf(stderr, "Sorry,   no   match   ...\n");
@@ -100,11 +104,14 @@ int analyze(urlset *pus,int sockfd)
              memcpy(matched, p + subs[0].rm_so, len);
              matched[len] = '\0';
              printf("%s\n",matched);
-                
-             strncpy(pus->url[pus->n_write],matched,len);
-             pus->n_write++;
-             send_ipc(matched);
-       
+               
+             pus->n_write++; 
+             	//printf("pus->n_write:%d\n",pus->n_write);
+             pus->url[pus->n_write]=(char*)malloc(128*sizeof(char));
+             strncpy(pus->url[pus->n_write],matched,len+1); 
+            
+             //send_ipc(matched);
+      
 		//ipc_ana(matched,buf);
 
 		p+=subs[0].rm_eo;
