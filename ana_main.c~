@@ -21,7 +21,6 @@ int main()
 		us.url[i]=NULL;
 	}
 //printf("us.n_write:%d\n",us.n_write);
-	while(1)
 	analyze(&us,sockfd);
 
 	assert(nn_shutdown (sockfd, 0));
