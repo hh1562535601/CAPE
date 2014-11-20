@@ -17,19 +17,21 @@ int main()
 
 	destroy_threadpool(tp);*/
 
-	char *url="http://10.106.108.179/techqq/index.htm";
-	char *buf=(char*)malloc(250*1024*sizeof(char));
-	char *recvbuf=NULL;
-
+	char *url="/techqq/index.htm";
+	char *recvbuf=(char*)malloc(256*1024*sizeof(char));
+	//char *recvbuf=NULL;
+		
+	//crawler(url);
+	send_ipc("hello","ipc://./cra_ipc.ipc");
 	/*while(1)
 	{
-		crawler(url,buf);
-  		assert (nn_bind (sockfd, IPC_URL) >= 0);
-      	//printf ("NODE0: RECEIVED \"%s\"\n", buf);
-		recv_ipc(sockfd,&recvbuf);
-		nn_freemsg (buf);
+		recv_ipc(recvbuf,256*1024,"ipc://./ana_ipc.ipc");
+		//printf("fasfasf");
+		printf("recvbuf:%s\n",recvbuf);
+		crawler(recvbuf);
+		//nn_freemsg (recvbuf);
 	}*/
-	crawler(url,buf);
+
 	
 	return 0;
 }

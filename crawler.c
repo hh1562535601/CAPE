@@ -42,7 +42,7 @@ void crawler1(void *arg)
 	close(sockfd);
 }
 
-void crawler(char *url,char *buf)
+void crawler(char *url)
 {
 	struct event *ev;
 	struct event_base *base=event_base_new();
@@ -69,7 +69,7 @@ void crawler(char *url,char *buf)
 	}
 
 	char * request = (char *) malloc (1024 * sizeof(char));
-	sprintf(request, "GET /techqq/index.htm HTTP/1.1\r\nAccept: html/text\r\nHost: 10.108.106.179\r\nConnection: Close\r\n\r\n");
+	sprintf(request, "GET %s HTTP/1.1\r\nAccept: html/text\r\nHost: 10.108.106.179\r\nConnection: Close\r\n\r\n",url);
 	int send = write(fd, request, strlen(request));
 	free(request);
 
@@ -77,7 +77,7 @@ void crawler(char *url,char *buf)
 	event_add(ev,NULL);
 	event_base_loopexit(base,&tv);
 	event_base_dispatch(base);
-	//printf("after dispatch!\n");
+	printf("after dispatch!\n");
 	//send_ipc(buf);
 }
 
@@ -155,19 +155,21 @@ int ipc_cra(const char *url,char *buf)
 
 void cb_func(evutil_socket_t fd, short what,void *arg)
 {
-	char *response=(char*)malloc(100*1024*sizeof(char));
+	char *response=(char*)malloc(200*1024*sizeof(char));
 	//printf("cb_func:%s\n",(char*)arg);
-	int len=read(fd, response, 100*1024);
-	/*printf("len:%d\n\n",len);
+	int len=read(fd, response, 200*1024);
+	//printf("len:%d\n\n",len);
 
-	int file = open("./test.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
+	/*int file = open("./test.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
 	write(file,response,len);
 	
 	close(file);*/
 	
 	//strncpy((char*)arg,response,len);
 	response[len]='\0';
-	send_ipc(response);
+	send_ipc(response,"ipc://./cra_ipc.ipc");
+	//sleep(1);
+	//printf("send successfully!\n");
 	
 	free(response);
 }

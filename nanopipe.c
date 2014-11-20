@@ -8,31 +8,32 @@
 #define NODE1 "node1"
 
 int node0 (const char *url)
-{
+{int i;
   int sock = nn_socket (AF_SP, NN_PULL);
   assert (sock >= 0);
   assert (nn_bind (sock, url) >= 0);
-  while (1)
+  for(i=0;i<3;i++)
     {
       char *buf = NULL;
       int bytes = nn_recv (sock, &buf, NN_MSG, 0);
       assert (bytes >= 0);
-      printf ("NODE0: RECEIVED \"%s\"\n", buf);
+      printf ("NODE0: RECEIVED \"%d\"\n", i);
       nn_freemsg (buf);
     }
 }
 
 int node1 (const char *url, const char *msg)
-{
+{int i;
   int sz_msg = strlen (msg) + 1; // '\0' too
   int sock = nn_socket (AF_SP, NN_PUSH);
   assert (sock >= 0);
   assert (nn_connect (sock, url) >= 0);
-  printf ("NODE1: SENDING \"%s\"\n", msg);
+ for(i=0;i<3;i++)
+  {printf ("NODE1: SENDING \"%d\"\n", i);
   printf("before send!\n");
   int bytes = nn_send (sock, msg, sz_msg, 0);
   printf("after send!\n");
-  assert (bytes == sz_msg);
+  assert (bytes == sz_msg);}
   return nn_shutdown (sock, 0);
 }
 
