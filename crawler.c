@@ -42,13 +42,14 @@ void crawler1(void *arg)
 	close(sockfd);
 }
 
-void crawler(char *url)
+int crawler(char *url)
 {
 	struct event *ev;
 	struct event_base *base=event_base_new();
 	evutil_socket_t fd;
 	struct sockaddr_in serv_socket;
 	struct timeval tv;
+	int success=0;
 
 	tv.tv_sec=0;
 	tv.tv_usec=25*1000;
@@ -73,12 +74,14 @@ void crawler(char *url)
 	int send = write(fd, request, strlen(request));
 	free(request);
 
-	ev=event_new(base,fd,EV_TIMEOUT|EV_READ|EV_PERSIST,cb_func,NULL);
+	ev=event_new(base,fd,EV_TIMEOUT|EV_READ|EV_PERSIST,cb_func,&success);
 	event_add(ev,NULL);
 	event_base_loopexit(base,&tv);
 	event_base_dispatch(base);
-	printf("after dispatch!\n");
+	//printf("after dispatch!\n");
 	//send_ipc(buf);
+	
+	return success;
 }
 
 void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, char * ip, int port, char * file_loc, char * body, char * connection_type) 
@@ -166,6 +169,7 @@ void cb_func(evutil_socket_t fd, short what,void *arg)
 	close(file);*/
 	
 	//strncpy((char*)arg,response,len);
+	*((int*)arg)=1;//restore to int variable and assign
 	response[len]='\0';
 	send_ipc(response,"ipc://./cra_ipc.ipc");
 	//sleep(1);

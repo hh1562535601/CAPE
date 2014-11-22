@@ -21,16 +21,22 @@ int main()
 	char *recvbuf=(char*)malloc(256*1024*sizeof(char));
 	//char *recvbuf=NULL;
 		
-	//crawler(url);
-	send_ipc("hello","ipc://./cra_ipc.ipc");
-	/*while(1)
+	crawler(url);
+	//send_ipc("hello","ipc://./cra_ipc.ipc");
+	while(1)
 	{
 		recv_ipc(recvbuf,256*1024,"ipc://./ana_ipc.ipc");
 		//printf("fasfasf");
 		printf("recvbuf:%s\n",recvbuf);
-		crawler(recvbuf);
+		while(crawler(recvbuf) == 0)
+		{
+			recv_ipc(recvbuf,256*1024,"ipc://./ana_ipc.ipc");
+			printf("recvbuf:%s\n",recvbuf);
+			crawler(recvbuf);
+		}
+		
 		//nn_freemsg (recvbuf);
-	}*/
+	}
 
 	
 	return 0;

@@ -79,13 +79,13 @@ int analyze(urlset *pus)
     	return 0;
     }
     
-    /*int file = open("./test_ana.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
+    //int file = open("./test_ana.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
     FILE *file=fopen("./test_ana.html","a");
     fprintf(file,"%s",p);
-    close(file);*/
+    close(file);
     
     while(1)
-     {	printf("while loop\n");
+     {	//printf("while loop\n");
 		err = regexec(&re, p, (size_t)SUBSLEN, subs, 0);
 
 		if (err == REG_NOMATCH)
@@ -106,11 +106,11 @@ int analyze(urlset *pus)
                       return 0;
                 }	
 		//printf("%d\n",err);
-		//printf("match  begin: %d, end: %d, ",subs[0].rm_so, subs[0].rm_eo);
+		printf("match  begin: %d, end: %d, ",subs[0].rm_so, subs[0].rm_eo);
              len = subs[0].rm_eo - subs[0].rm_so+1;
              memcpy(matched, p + subs[0].rm_so, len);
              matched[len] = '\0';
-             //printf("%s\n",matched);
+             printf("%s\n",matched);
                
              extract(matched,pus);
             
@@ -170,8 +170,9 @@ int extract(char *string,urlset *pus)
       pus->url[pus->n_write]=(char*)malloc(128*sizeof(char));
       strncpy(pus->url[pus->n_write],loc1,len); 
       pus->url[pus->n_write][len]='\0';
-      //printf("pus->url[%d]:%s  len:%d\n",pus->n_write,pus->url[pus->n_write],len);
-      //send_ipc(pus->url[pus->n_write],"ipc://./ana_ipc.ipc");
+   
+      send_ipc(pus->url[pus->n_write],"ipc://./ana_ipc.ipc");
+      //printf("send:pus->url[%d]:%s  len:%d\n",pus->n_write,pus->url[pus->n_write],len);
       //printf("send successfully!\n");
       
       return 1;

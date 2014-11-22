@@ -3,25 +3,43 @@
 int send_ipc(const char *buf,char *ipc_url)
 {
   int sz_buf = strlen (buf) + 1; // '\0' too
-  int sockfd = nn_socket (AF_SP, NN_PUSH);
-  int timeout=100;
+  if(sz_buf == 1)
+  {
+  	return 0;
+  }
+  int sockfd = nn_socket(AF_SP, NN_PAIR);
+  //int timeout=100;
   assert (sockfd >= 0);
-  assert(nn_setsockopt (sockfd, NN_SOL_SOCKET, NN_SNDTIMEO, &timeout, sizeof (timeout)) >= 0);
+  //assert(nn_setsockopt (sockfd, NN_SOL_SOCKET, NN_SNDTIMEO, &timeout, sizeof (timeout)) >= 0);
   assert (nn_connect (sockfd, ipc_url) >= 0);
   //printf ("NODE1: SENDING \"%s\"\n", buf);
   int bytes;
   //while((bytes = nn_send (sockfd, buf, sz_buf, 0)) == -1);
-  while(bytes <= 0) 
+  do 
   {
-  	bytes = nn_send (sockfd, buf, sz_buf, 0);
-  	/*if(bytes > 0)
+  	//printf("before nn_send\n");
+  	bytes = nn_send (sockfd, buf, sz_buf, NN_DONTWAIT);
+  	printf("send error:%s-%s\n",errno==EAGAIN?"EAGAIN":"other errors",nn_strerror(errno));
+  	//printf("after nn_send\n");
+  	sleep(1);
+  	/*if(errno == EAGAIN)
+  	{
+  		break;
+  	}
+  	if(bytes > 0)
   	{
   		break;
   	}*/
   	//printf("bytes:%d sz_buf:%d\n",bytes);
+  }while(errno == EAGAIN && bytes <= 0);
+  /*bytes = nn_send (sockfd, buf, sz_buf, NN_DONTWAIT);
+  if(bytes <=0)
+  {
+  	//printf("%s\n",errno==EAGAIN?"errno:EAGAIN":"other errors");
+  	printf("error:%s-%s\n",errno==EAGAIN?"EAGAIN":"other errors",nn_strerror(errno));
   }
+  sleep(1);*/
   
-  nn_strerror(errno);
   /*switch(errno)
   {
   
@@ -59,37 +77,47 @@ case ETERM:
 
 int recv_ipc(char *buf,int sz_buf,char *ipc_url)
 {
-  int sockfd = nn_socket (AF_SP, NN_PULL);
-  int timeout=100;
+  int sockfd = nn_socket(AF_SP, NN_PAIR);
+  //int timeout=100;
   
   assert (sockfd >= 0);
-  assert(nn_setsockopt (sockfd, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof (timeout)) >= 0);
+  //assert(nn_setsockopt (sockfd, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof (timeout)) >= 0);
   //char *buf = NULL;
   assert (nn_bind (sockfd, ipc_url) >= 0);
-  //printf("before nn_recv!\n");
+ 
   //printf("sockfd:%d,buf[0]:%c,sz_buf:%d\n",sockfd,buf[0],sz_buf);
+  //printf("ipc_url:%s\n",ipc_url);
   int result;
   //while((result = nn_recv (sockfd, buf, sz_buf, 0)) == -1);
   //errno == EAGAIN || 
-  while(result <= 0)
+  do
   {//printf("recv again\n");
-  	result = nn_recv (sockfd, buf, sz_buf, 0);
-  	printf("recvbuf:%s\n",buf);
-  	/*if (result > 0)
+  	//printf("before nn_recv!\n");
+  	sleep(1);
+  	result = nn_recv (sockfd, buf, sz_buf, NN_DONTWAIT);
+  	printf("recv error:%s-%s\n",errno==EAGAIN?"EAGAIN":"other errors",nn_strerror(errno));
+  	
+  	//printf("after nn_recv!\n");
+  	/*if(errno == EAGAIN)
   	{
   		break;
+  	}
+  	if (result > 0)
+  	{
+  		//printf("recvbuf:%s\n",buf);
+  		break;
   	}*/
-  }
-  //printf("after recv!\n");
+  }while(errno == EAGAIN && result <= 0);
+  
   /*if (result > 0)
     {
       printf ("%s: RECEIVED \"%s\"\n", name, buf);
       nn_freemsg (buf);
     }*/
     //(*buf)[result]='\0';
-  nn_strerror(errno);
+  printf("error:%s\n",nn_strerror(errno));
   printf("recv len:%d\n",result);
-  assert (nn_close(sockfd) == 0);
+  assert (nn_close(sockfd) == 0 );
 }
 
 /*int send_recv(int sock,const char *url,char *buf)

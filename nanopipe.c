@@ -28,7 +28,7 @@ int node1 (const char *url, const char *msg)
   int sock = nn_socket (AF_SP, NN_PUSH);
   assert (sock >= 0);
   assert (nn_connect (sock, url) >= 0);
- for(i=0;i<3;i++)
+  for(i=0;i<3;i++)
   {printf ("NODE1: SENDING \"%d\"\n", i);
   printf("before send!\n");
   int bytes = nn_send (sock, msg, sz_msg, 0);
