@@ -29,12 +29,12 @@ int main()
 	//send_ipc("hello","ipc://./cra_ipc.ipc");
 	while(1)
 	{
-		recv_ipc(sockfd,recvbuf,256*1024,"ipc://./ana_ipc.ipc");
+		recv_ipc(sockfd,recvbuf,256*1024);
 		//printf("fasfasf");
 		printf("recvbuf:%s\n",recvbuf);
 		while(crawler(sockfd,recvbuf) == 0)
 		{
-			recv_ipc(sockfd,recvbuf,256*1024,"ipc://./ana_ipc.ipc");
+			recv_ipc(sockfd,recvbuf,256*1024);
 			printf("recvbuf:%s\n",recvbuf);
 			crawler(sockfd,recvbuf);
 		}

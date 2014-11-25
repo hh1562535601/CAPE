@@ -168,15 +168,14 @@ void cb_func(evutil_socket_t fd, short what,void *arg)
 	int sockfd=((int*)arg)[0];
 	//printf("len:%d\n\n",len);
 
-	int file = open("./test.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
+	/*int file = open("./test.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
 	write(file,response,len);
-	
-	close(file);
+	close(file);*/
 	
 	//strncpy((char*)arg,response,len);
 	((int*)arg)[1]=1;//flag
 	response[len]='\0';
-	//send_ipc(sockfd,response,"ipc://./cra_ipc.ipc");
+	send_ipc(sockfd,response);
 	//sleep(1);
 	//printf("send successfully!\n");
 	

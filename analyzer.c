@@ -33,10 +33,12 @@ int analyze(int sockfd,urlset *pus)
     char matched[BUFLEN]; /*   store   matched   strings   */
     char errbuf[EBUFLEN]; /*   store   error   message   */
     int err, i;
+    ulong slen=256*1024;
  
     //char string[] = "AAAAabaaababAbAbCdCd123123   11(123){12} ";
     //char pattern[] = "(\\([0-9]+\\))(\\{[0-9]+\\}{1})$ ";
     char *recvbuf=(char*)malloc(256*1024*sizeof(char));
+    char *srcbuf=(char*)malloc(256*1024*sizeof(char));
     char *p=NULL;
     //char pattern[] ="([/w-]+/.)+[/w-]+.([^a-z])(/[/w-: ./?%&=]*)?|[a-zA-Z/-/.][/w-]+.([^a-z])(/[/w-: ./?%&=]*)?";
     //char pattern[] ="([http|https]://)?([/w-]+/.)+[/w-]+(/[/w- ./?%&amp;=]*)?";
@@ -69,20 +71,29 @@ int analyze(int sockfd,urlset *pus)
     //fread(string,1,256*1024,fp);
     //printf("before recv!\n");
     recvbuf[0]='\0';
-    recv_ipc(sockfd,recvbuf,256*1024,"ipc://./cra_ipc.ipc");
+    recv_ipc(sockfd,recvbuf,256*1024);
     //printf("after recv!\n");
-     
-    p=recvbuf;
-    //printf("%s",p);
+      FILE *file=fopen("./test_ana.html","a");
+    if(ungzip(srcbuf,256*1024,file) != 1)
+    {
+    	printf("uncompress failed!\n");
+    	free(recvbuf);
+    	free(srcbuf);
+    	regfree(&re);
+    	return 0;
+    }
+    free(recvbuf);
+    p=srcbuf;
+    printf("%s",p);
     if(p[0]=='\0')
     {
     	return 0;
     }
     
     //int file = open("./test_ana.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
-    FILE *file=fopen("./test_ana.html","a");
-    fprintf(file,"%s",p);
-    close(file);
+   
+    //fprintf(file,"%s",p);
+    fclose(file);
     
     while(1)
      {	//printf("while loop\n");
@@ -93,8 +104,8 @@ int analyze(int sockfd,urlset *pus)
                     printf("Sorry,   no   match   ...\n");
                     regfree(&re);
                     //nn_freemsg(recvbuf);
-                    free(recvbuf);
-		        return 0;               
+                    free(srcbuf);
+		        return 0;       //return value is boolean,not errno.       
                 }
              else if (err)
                 {
@@ -102,7 +113,7 @@ int analyze(int sockfd,urlset *pus)
                       printf("error:   regexec:   %s\n ", errbuf);
 			   regfree(&re);
 			   //nn_freemsg(recvbuf);
-			   free(recvbuf);
+			   free(srcbuf);
                       return 0;
                 }	
 		//printf("%d\n",err);
@@ -141,7 +152,7 @@ int analyze(int sockfd,urlset *pus)
  
  
     //nn_freemsg(recvbuf);
-    free(recvbuf);
+    free(srcbuf);
     regfree(&re);
 
    return 1;
@@ -171,7 +182,7 @@ int extract(int sockfd,char *string,urlset *pus)
       strncpy(pus->url[pus->n_write],loc1,len); 
       pus->url[pus->n_write][len]='\0';
    
-      send_ipc(sockfd,pus->url[pus->n_write],"ipc://./ana_ipc.ipc");
+      send_ipc(sockfd,pus->url[pus->n_write]);
       //printf("send:pus->url[%d]:%s  len:%d\n",pus->n_write,pus->url[pus->n_write],len);
       //printf("send successfully!\n");
       

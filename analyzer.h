@@ -4,10 +4,11 @@
 #include   <sys/types.h>
 #include   <stdlib.h>
 #include   <regex.h>
+#include   <zlib.h>
+#include   <fcntl.h>
+//#include   <error.h>
 
-#include <fcntl.h>
-
-#include "ipc_nano.h"
+#include   "ipc_nano.h"
  
 #define   SUBSLEN   10
 #define   EBUFLEN   128  /*   error   buffer   length   */
