@@ -22,5 +22,5 @@
 #define NUM_THREADS 1
 
 void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, char * ip, int port, char * file_loc, char * body, char * connection_type);
-int crawler(char *url);
+int crawler(int sockfd,char *url);
 void cb_func(evutil_socket_t fd, short what,void *arg);

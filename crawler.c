@@ -42,14 +42,18 @@ void crawler1(void *arg)
 	close(sockfd);
 }
 
-int crawler(char *url)
+int crawler(int sockfd,char *url)
 {
 	struct event *ev;
 	struct event_base *base=event_base_new();
 	evutil_socket_t fd;
 	struct sockaddr_in serv_socket;
 	struct timeval tv;
-	int success=0;
+	//int success=0;
+	int arg[2];
+	
+	arg[0]=sockfd;
+	arg[1]=0;
 
 	tv.tv_sec=0;
 	tv.tv_usec=25*1000;
@@ -70,18 +74,18 @@ int crawler(char *url)
 	}
 
 	char * request = (char *) malloc (1024 * sizeof(char));
-	sprintf(request, "GET %s HTTP/1.1\r\nAccept: html/text\r\nHost: 10.108.106.179\r\nConnection: Close\r\n\r\n",url);
+	sprintf(request, "GET %s HTTP/1.1\r\nAccept: html/text\r\nAccept-Encoding:gzip,deflate\r\nHost: 10.108.106.179\r\nConnection: Close\r\n\r\n",url);
 	int send = write(fd, request, strlen(request));
 	free(request);
 
-	ev=event_new(base,fd,EV_TIMEOUT|EV_READ|EV_PERSIST,cb_func,&success);
+	ev=event_new(base,fd,EV_TIMEOUT|EV_READ|EV_PERSIST,cb_func,arg);
 	event_add(ev,NULL);
 	event_base_loopexit(base,&tv);
 	event_base_dispatch(base);
 	//printf("after dispatch!\n");
 	//send_ipc(buf);
 	
-	return success;
+	return arg[1];
 }
 
 void send_and_recv(int sockfd, char * url, char * fun_type, char * accept_type, char * ip, int port, char * file_loc, char * body, char * connection_type) 
@@ -161,17 +165,18 @@ void cb_func(evutil_socket_t fd, short what,void *arg)
 	char *response=(char*)malloc(200*1024*sizeof(char));
 	//printf("cb_func:%s\n",(char*)arg);
 	int len=read(fd, response, 200*1024);
+	int sockfd=((int*)arg)[0];
 	//printf("len:%d\n\n",len);
 
-	/*int file = open("./test.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
+	int file = open("./test.html", O_RDWR | O_APPEND | O_CREAT,S_IRWXU);
 	write(file,response,len);
 	
-	close(file);*/
+	close(file);
 	
 	//strncpy((char*)arg,response,len);
-	*((int*)arg)=1;//restore to int variable and assign
+	((int*)arg)[1]=1;//flag
 	response[len]='\0';
-	send_ipc(response,"ipc://./cra_ipc.ipc");
+	//send_ipc(sockfd,response,"ipc://./cra_ipc.ipc");
 	//sleep(1);
 	//printf("send successfully!\n");
 	

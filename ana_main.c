@@ -6,12 +6,14 @@ int main()
 
     	urlset us;
     	int i;
+    	int sockfd = nn_socket (AF_SP, NN_PAIR);
     	/*ichar *recvbuf=(char*)malloc(256*1024*sizeof(char));
-	nt sockfd = nn_socket (AF_SP, NN_PAIR);
 	int timeout=100;
-	
-	assert (sockfd >= 0);
+		
 	nn_setsockopt (sockfd, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof (timeout));*/
+
+	assert (sockfd >= 0);
+	assert (nn_bind (sockfd, "ipc://./cra_ana.ipc") >= 0);
 
     	us.n_read=-1;
     	us.n_write=-1;
@@ -24,7 +26,7 @@ int main()
 //printf("us.n_write:%d\n",us.n_write);
 	while(1)
 	{
-		analyze(&us);
+		analyze(sockfd,&us);
 		
 		//printf("infinite loop\n");
 	}

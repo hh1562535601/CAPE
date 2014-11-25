@@ -20,19 +20,23 @@ int main()
 	char *url="/techqq/index.htm";
 	char *recvbuf=(char*)malloc(256*1024*sizeof(char));
 	//char *recvbuf=NULL;
+	int sockfd=nn_socket(AF_SP,NN_PAIR);//nanomsg socket declaration before tcp socket may cause problems.
+	
+	assert (sockfd >= 0);
+	assert (nn_connect (sockfd, "ipc://./cra_ana.ipc") >= 0);
 		
-	crawler(url);
+	crawler(sockfd,url);
 	//send_ipc("hello","ipc://./cra_ipc.ipc");
 	while(1)
 	{
-		recv_ipc(recvbuf,256*1024,"ipc://./ana_ipc.ipc");
+		recv_ipc(sockfd,recvbuf,256*1024,"ipc://./ana_ipc.ipc");
 		//printf("fasfasf");
 		printf("recvbuf:%s\n",recvbuf);
-		while(crawler(recvbuf) == 0)
+		while(crawler(sockfd,recvbuf) == 0)
 		{
-			recv_ipc(recvbuf,256*1024,"ipc://./ana_ipc.ipc");
+			recv_ipc(sockfd,recvbuf,256*1024,"ipc://./ana_ipc.ipc");
 			printf("recvbuf:%s\n",recvbuf);
-			crawler(recvbuf);
+			crawler(sockfd,recvbuf);
 		}
 		
 		//nn_freemsg (recvbuf);

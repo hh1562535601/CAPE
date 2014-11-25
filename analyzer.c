@@ -24,7 +24,7 @@
   return nn_shutdown (sock, 0);
 }*/
 
-int analyze(urlset *pus)
+int analyze(int sockfd,urlset *pus)
 {
     //FILE *fp = NULL;
     size_t len; /*   store   error   message   length   */
@@ -69,7 +69,7 @@ int analyze(urlset *pus)
     //fread(string,1,256*1024,fp);
     //printf("before recv!\n");
     recvbuf[0]='\0';
-    recv_ipc(recvbuf,256*1024,"ipc://./cra_ipc.ipc");
+    recv_ipc(sockfd,recvbuf,256*1024,"ipc://./cra_ipc.ipc");
     //printf("after recv!\n");
      
     p=recvbuf;
@@ -112,7 +112,7 @@ int analyze(urlset *pus)
              matched[len] = '\0';
              printf("%s\n",matched);
                
-             extract(matched,pus);
+             extract(sockfd,matched,pus);
             
              //send_ipc(matched);
       
@@ -147,7 +147,7 @@ int analyze(urlset *pus)
    return 1;
 }
 
-int extract(char *string,urlset *pus)
+int extract(int sockfd,char *string,urlset *pus)
 {
 	int i;
 	char *loc1=string;
@@ -171,7 +171,7 @@ int extract(char *string,urlset *pus)
       strncpy(pus->url[pus->n_write],loc1,len); 
       pus->url[pus->n_write][len]='\0';
    
-      send_ipc(pus->url[pus->n_write],"ipc://./ana_ipc.ipc");
+      send_ipc(sockfd,pus->url[pus->n_write],"ipc://./ana_ipc.ipc");
       //printf("send:pus->url[%d]:%s  len:%d\n",pus->n_write,pus->url[pus->n_write],len);
       //printf("send successfully!\n");
       
