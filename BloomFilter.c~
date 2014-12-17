@@ -16,7 +16,7 @@ unsigned int (*hashfamily[HASH_NUMBER])(char *, unsigned int) = {&RSHash, &JSHas
 
 
 void bf_add(void *bf, char *str)
-{printf("bf_add!\n");
+{
 	int i = 0;
 	while(i<HASH_NUMBER)//hash_number=11
 	{
@@ -25,7 +25,7 @@ void bf_add(void *bf, char *str)
 }
 
 int bf_search(void *bf, char *str)
-{ puts("bf_search!\n");
+{
 	int i = 0;
 	while(i<HASH_NUMBER)
 		if(get_BIT(hashfamily[i++](str, strlen(str)), bf) == 0)

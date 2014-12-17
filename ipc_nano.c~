@@ -95,7 +95,7 @@ int recv_ipc(int sockfd,char *buf,int sz_buf)
   //while((result = nn_recv (sockfd, buf, sz_buf, 0)) == -1);
   //errno == EAGAIN || 
   do
-  {printf("sz_buf:%d\n",sz_buf);
+  {//printf("recv again\n");
   	//printf("before nn_recv!\n");
   	errno=0;
   	//sleep(1);

@@ -182,7 +182,7 @@ void cb_func(evutil_socket_t fd, short what,void *arg)
 	//argus->success=1;
 	
 	/*add url to response,"#@!" is the flag of the start and end.*/
-	strcat(response,"!@#");
+	strcat(response,"#@!");
 	//printf("cururl:%s\n",url);
 	strcat(response,url);
 	strcat(response,"#@!");

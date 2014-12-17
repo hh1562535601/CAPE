@@ -43,7 +43,7 @@ int main()
 		//printf("fasfasf");
 		fgets(recvbuf,1024,file);
 		printf("recvbuf:%s\n",recvbuf);
-		crawler(recvbuf);
+		crawler(sockfd,recvbuf);
 		//printf("count:%d\n",count++);
 		/*while(crawler(sockfd,recvbuf) == 0)
 		{puts("1");

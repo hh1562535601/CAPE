@@ -24,7 +24,7 @@
   return nn_shutdown (sock, 0);
 }*/
 
-int analyze(char *bfbuf)
+int analyze(char *bfbuf,urlset *pus)
 {
     //FILE *fp = NULL;
     size_t len; /*   store   error   message   length   */

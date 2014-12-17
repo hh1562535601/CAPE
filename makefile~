@@ -1,5 +1,5 @@
 Crawler:cra_main.o crawler.o
-	cc -g cra_main.o crawler.o -o Crawler -levent
+	cc -g cra_main.o crawler.o -o Crawler -lpthread -lnanomsg -levent
 
 cra_main.o:cra_main.c
 	cc -g -c cra_main.c
@@ -11,7 +11,7 @@ ipc_nano.o:ipc_nano.c
 	cc -g -c ipc_nano.c
 
 Analyzer:ana_main.o  analyzer.o pcre.o BloomFilter.o GeneralHashFunctions.o
-	cc -g ana_main.o analyzer.o pcre.o BloomFilter.o GeneralHashFunctions.o -o Analyzer
+	cc -g ana_main.o analyzer.o pcre.o BloomFilter.o GeneralHashFunctions.o -o Analyzer -lnanomsg -lz
 	
 ana_main.o:ana_main.c
 	cc -g -c ana_main.c
